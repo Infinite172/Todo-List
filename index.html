@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo-List</title>
+  <style>
+    body {
+      background-color: rgb(0, 0, 0, 0.6);
+      color: white;
+      padding-left: 100px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+    }
+
+    button {
+      color: white;
+      background: rgb(59, 139, 192);
+      border-radius: 20px;
+      border: none;
+      font-size: 15px;
+      padding-top: 3px;
+      padding-bottom: 3px;
+      padding-left: 10px;
+      padding-right: 10PX;
+      cursor: pointer;
+      margin-left: 8px;
+      transition: box-shadow 0.2s;
+    }
+
+    button:hover {
+      box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    #input {
+      margin-bottom: 30px;
+    }
+
+    input {
+      margin-right: 15px;
+      border: none;
+      padding: 5px;
+      width: 150px;
+      background-color: gold;
+    }
+
+    button:active {
+      color: blue;
+      background: white;
+    }
+  </style>
+</head>
+
+<body>
+  <H1>Todo List</H1>
+  <div id="input">
+    <input type="text" placeholder="Add Todo" id="todo-box" />
+    <input type="date" id="todo-date" />
+    <input type="time" id="todo-time" />
+    <button id="add-todo-btn" onclick="addtodo()">Add Todo</button>
+    <button id="reset-btn" onclick="resettodo()">Reset</button>
+    <button id="clear-btn" onclick="cleartodo()">Clear</button>
+
+  </div>
+  <div id="todo-list"></div>
+
+  <script>
+    //Model
+
+    //If localstorage has a todos array, then use it
+    //Otherwise use the default array
+    let todos;
+    //Retrieve Localstorage
+    const savedTodos = JSON.parse(localStorage.getItem('todos'));
+    //Check if it's an array
+    if (Array.isArray(savedTodos)) {
+      todos = savedTodos;
+    } else {
+      todos = [
+        { title: 'One', dueDate: "2022-1-30", dueTime: '22: 34', id: "id1" },
+        { title: 'Two', dueDate: "2022-4-3", dueTime: '22: 34', id: "id2" },
+        { title: 'Three', dueDate: "2022-11-5", dueTime: '22: 34', id: "id3" }
+      ];
+    }
+
+    render();
+
+    //Creates a todo
+    function createTodo(asd, date, time) {
+      let id = " " + new Date().getTime();
+
+      todos.push({
+        title: asd,
+        dueDate: date,
+        dueTime: time,
+        id: id
+      });
+      saveTodos();
+    }
+
+    //Deletes a todo
+    function removetodo(tods) {
+      todos = todos.filter(function (tod) {
+        if (tod.id === tods) {
+          return false;
+        } else {
+          return true;
+        }
+      });
+      saveTodos();
+    };
+
+
+    //Reset List
+    function resettodo() {
+      todos = [
+        { title: 'One', dueDate: "2022-1-30", dueTime: '22: 34', id: "id1" },
+        { title: 'Two', dueDate: "2022-4-3", dueTime: '22: 34', id: "id2" },
+        { title: 'Three', dueDate: "2022-11-5", dueTime: '22: 34', id: "id3" }
+      ];
+      render();
+      saveTodos();
+    };
+
+    //Clear List
+    function cleartodo() {
+      todos = [];
+      render();
+      saveTodos();
+    };
+
+    function saveTodos() {
+      localStorage.setItem('todos', JSON.stringify(todos));
+    };
+
+    //Controller
+    function deleteTodo(event) {
+      let deleteButton = event.target;
+      let idtodelete = deleteButton.id;
+
+      removetodo(idtodelete);
+      render();
+    };
+
+    function addtodo() {
+      let qwe = document.getElementById('todo-box');
+      let asd = qwe.value;
+
+      let datepicker = document.getElementById('todo-date');
+      let date = datepicker.value;
+
+      let timepicker = document.getElementById('todo-time');
+      let time = timepicker.value;
+
+      createTodo(asd, date, time);
+      render();
+    };
+
+    //View
+    function render() {
+
+      //reset our list
+      document.getElementById('todo-list').innerHTML = " ";
+
+      todos.forEach(function (todo) {
+        let element = document.createElement('div');
+        element.innerText = todo.title + " " + todo.dueDate + " " + todo.dueTime;
+        element.style = 'margin-top: 10px';
+
+        let deleteButton = document.createElement('button');
+        deleteButton.innerText = 'Delete';
+        deleteButton.id = todo.id;
+        deleteButton.style = 'margin-left: 15px';
+        deleteButton.onclick = deleteTodo;
+        element.appendChild(deleteButton);
+
+        let asdf = document.getElementById('todo-list');
+        asdf.appendChild(element);
+      });
+    };
+
+  </script>
+</body>
+
+</html>
